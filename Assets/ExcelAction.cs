@@ -32,8 +32,12 @@ public class ExcelAction : ScriptableObject {
 
         int i = 1; //省略掉第0行
 
+        //获取指定目录下的所有文件
+        var dialogueDatas = GetFiles<DialogueData>(saveScriptableObjectPath);
+        Debug.Log("加载" + dialogueDatas.Count + "个对话");
+        
         //遍历所有对话文件
-        foreach (var dialogue in dialogueData.datas)
+        foreach (var dialogue in dialogueDatas)
         {
             var row = sheet.CreateRow(i);
             var cell = row.CreateCell(0);
@@ -121,5 +125,36 @@ public class ExcelAction : ScriptableObject {
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+    }
+    
+    //获取指定路径下面的所有资源文件  
+    public static List<T> GetFiles<T>(string dir) where T : UnityEngine.Object
+    {
+        string path = string.Format(dir);
+        var list = new List<T>();
+        if (Directory.Exists(path))
+        {
+            DirectoryInfo direction = new DirectoryInfo(path);
+            FileInfo[] files = direction.GetFiles("*");
+
+            for (int i = 0; i < files.Length; i++)
+            {
+                //忽略关联文件
+                if (files[i].Name.EndsWith(".meta"))
+                {
+                    continue;
+                }
+#if UNITY_EDITOR      
+                var so = AssetDatabase.LoadAssetAtPath<T>(dir + "/" + files[i].Name);
+                if (so != null)
+                {
+                    Debug.Log("加载资源" + files[i].Name);
+                    list.Add(so as T);
+                }
+#endif
+            }
+        }
+
+        return list;
     }
 }
