@@ -96,7 +96,9 @@ public class ExcelAction : ScriptableObject {
                     //是否原来已经创建了ScriptableObject资源
                     if (File.Exists(saveScriptableObjectPath + "/" + so.name + ".asset"))
                     {
-
+                        var loadSo = AssetDatabase.LoadAssetAtPath<DialogueData>(saveScriptableObjectPath + "/" + so.name + ".asset");
+                        loadSo.data = so.data;
+                        EditorUtility.SetDirty(loadSo); //标记为已修改
                     }
                     else
                         AssetDatabase.CreateAsset(so, saveScriptableObjectPath + "/" + so.name + ".asset");
