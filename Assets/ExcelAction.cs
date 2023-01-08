@@ -10,6 +10,8 @@ using NPOI.SS.UserModel;
 using NPOI.HSSF.UserModel;
 #endif
 
+using Dialogue;
+
 public class ExcelAction : ScriptableObject {
     public string saveScriptableObjectPath; //对话数据文件夹存储路径
     public string excelPath;                //excel表格文件路径
@@ -42,16 +44,16 @@ public class ExcelAction : ScriptableObject {
             var row = sheet.CreateRow(i);
             var cell = row.CreateCell(0);
             //讲ScriptableObject的name写在第一列
-            cell.SetCellValue(dialogue.ID.name);
+            cell.SetCellValue(dialogue.name);
             //遍历句子内容
-            for (int j = 0; j < dialogue.ID.data.Count; j++)  
+            for (int j = 0; j < dialogue.data.Count; j++)  
             {
                 if (j != 0)
                     row = sheet.CreateRow(i);
                 //将名字写在第二列
-                row.CreateCell(1).SetCellValue(dialogue.ID.data[j].character.ToString());
+                row.CreateCell(1).SetCellValue(dialogue.data[j].character.ToString());
                 //将对话内容写在第三列
-                row.CreateCell(2).SetCellValue(dialogue.ID.data[j].content);
+                row.CreateCell(2).SetCellValue(dialogue.data[j].content);
                 i++;
             }
         }
@@ -94,7 +96,7 @@ public class ExcelAction : ScriptableObject {
                     //是否原来已经创建了ScriptableObject资源
                     if (File.Exists(saveScriptableObjectPath + "/" + so.name + ".asset"))
                     {
-                        dialogueData.datas.Find(x => { return x.ID.name == so.name; }).ID.data = so.data;
+
                     }
                     else
                         AssetDatabase.CreateAsset(so, saveScriptableObjectPath + "/" + so.name + ".asset");
